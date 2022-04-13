@@ -1,0 +1,75 @@
+<html>
+
+<head>
+    <title>test</title>
+    <style>
+        #pinboard {
+            background: #c5985f;
+            width: 100%;
+            height: 100%;
+            user-select: none;
+        }
+
+        .postit {
+            background: #c8d9d9;
+            position: absolute;
+            width: 300px;
+            height: 300px;
+        }
+
+        .postit-top {
+            width: 100%;
+            background: #8b9b9b;
+            height: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <script src="/socket.io/socket.io.js"></script>
+
+    <div id="pinboard"></div>
+
+    <script>
+        var socket = io()
+        /*
+        var messages = document.getElementById('messages');
+        var form = document.getElementById('form');
+        var input = document.getElementById('input');
+        */
+
+        let pinboard = document.getElementById("pinboard");
+
+        pinboard.addEventListener('dblclick', function (e) {
+            if (e.srcElement == pinboard) {
+                // create post-it
+                let postit = document.createElement("div")
+                postit.classList.add("postit")
+                postit.style.top = e.clientY - 10
+                postit.style.left = e.clientX - 150 < 150 ? e.clientX : e.clientX - 150
+                // post-it draggable
+                let postit_top = document.createElement("div")
+                postit_top.classList.add("postit-top")
+                postit.appendChild(postit_top)
+                pinboard.appendChild(postit)
+            }
+        })
+
+        /*form.addEventListener('submit', function(e) {
+          e.preventDefault();
+          if (input.value) {
+            socket.emit('chat message', input.value);
+            input.value = '';
+          }
+        });
+  
+        socket.on('chat message', function(msg) {
+          var item = document.createElement('li');
+          item.textContent = msg;
+          messages.appendChild(item);
+          window.scrollTo(0, document.body.scrollHeight);
+        });*/
+    </script>
+</body>
+
+</html>
