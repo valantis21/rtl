@@ -32,6 +32,9 @@
 
     <script>
         var socket = io()
+        var dragX = 0;
+        var dragY = 0;
+        var dragging = undefined;
         /*
         var messages = document.getElementById('messages');
         var form = document.getElementById('form');
@@ -50,6 +53,12 @@
                 // post-it draggable
                 let postit_top = document.createElement("div")
                 postit_top.classList.add("postit-top")
+                postit_top.ondragstart = function(e) {
+                    dragX = e.clientX
+                    dragY = e.clientY
+                    dragging = e.srcElement
+                    console.log(dragY)
+                }
                 postit.appendChild(postit_top)
                 pinboard.appendChild(postit)
             }
