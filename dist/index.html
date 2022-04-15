@@ -1,0 +1,139 @@
+
+<html>
+  <head>
+    <title>test</title>
+    <script>
+      function createPostIt(x, y) {
+      // create post-it
+      let postit = document.createElement("div")
+      postit.style.zIndex = global_zindex
+      global_zindex++
+      postit.onmousedown = function (e) {
+      e.srcElement.parentNode.style.zIndex = global_zindex
+      global_zindex++
+      }
+      postit.classList.add("postit")
+      postit.style.top = y - 10
+      postit.style.left = x - 150 < 150 ? x : x - 150
+      // post-it draggable
+      let postit_top = document.createElement("div")
+      postit_top.classList.add("postit-top")
+      draggable(postit_top)
+      postit.appendChild(postit_top)
+      // post-it body
+      let postit_body = document.createElement("div")
+      postit_body.style.wordWrap = "anywhere"
+      postit_body.style.width = "100%"
+      postit_body.style.height = "274px"
+      postit_body.contentEditable = true
+      postit.onmousemove = function (e) {
+      if (postit_body.style.height != undefined)
+      postit_body.style.height = parseInt(postit.style.height) - 26 + "px"
+      }
+      postit_body.classList.add("postit-body")
+      postit.appendChild(postit_body)
+      // post-it close button
+      let postit_close = document.createElement("div")
+      postit_close.innerHTML = "&nbsp;×&nbsp;"
+      postit_close.classList.add("postit-close")
+      postit_close.onclick = function (e) {
+      e.srcElement.parentNode.parentNode.remove()
+      }
+      postit_top.appendChild(postit_close)
+      pinboard.appendChild(postit)
+      }
+    </script>
+    <style>
+      #pinboard {
+      background: #c5985f;
+      width: 100%;
+      height: 100%;
+      user-select: none;
+      }
+      .postit {
+      background: #c8d9d9;
+      position: absolute;
+      width: 300px;
+      height: 300px;
+      resize: both;
+      overflow: auto;
+      scrollbar-width: none;
+      box-shadow: 0px 0px 5px #6b6b6b80;
+      }
+      .postit-top {
+      width: 100%;
+      background: #8b9b9b;
+      height: 20px;
+      }
+      .postit-body {
+      padding-top: 3px;
+      padding-left: 5px;
+      padding-right: 5px;
+      padding-bottom: 3px;
+      overflow: auto;
+      scrollbar-width: none;
+      }
+      .postit-body::-webkit-scrollbar {
+      display: none;
+      }
+      .postit-close {
+      font-weight: bold;
+      position: absolute;
+      font-size: 17px;
+      color: white;
+      background: #5d6767;
+      padding: 0;
+      right: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <script src="/socket.io/socket.io.js"></script>
+    <div id="pinboard"></div>
+    <script>
+      var socket = io()
+      var global_zindex = 0
+      // makes post-its draggable
+      function draggable(el) {
+      el.addEventListener('mousedown', function (e) {
+      let offsetX = e.clientX - parseInt(window.getComputedStyle(this.parentNode).left);
+      let offsetY = e.clientY - parseInt(window.getComputedStyle(this.parentNode).top);
+      function mouseMoveHandler(e) {
+      el.parentNode.style.top = (e.clientY - offsetY) + 'px';
+      el.parentNode.style.left = (e.clientX - offsetX) + 'px';
+      }
+      function reset() {
+      window.removeEventListener('mousemove', mouseMoveHandler);
+      window.removeEventListener('mouseup', reset);
+      }
+      window.addEventListener('mousemove', mouseMoveHandler);
+      window.addEventListener('mouseup', reset);
+      });
+      }
+      /*
+      var messages = document.getElementById('messages');
+      var form = document.getElementById('form');
+      var input = document.getElementById('input');
+      */
+      let pinboard = document.getElementById("pinboard");
+      pinboard.addEventListener('dblclick', function (e) {
+      if (e.srcElement == pinboard) {
+      createPostIt(e.clientX, e.clientY)
+      }
+      })
+      /*form.addEventListener('submit', function(e) {
+      e.preventDefault();
+      if (input.value) {
+      socket.emit('chat message', input.value);
+      input.value = '';
+      }
+      });
+      socket.on('chat message', function(msg) {
+      var item = document.createElement('li');
+      item.textContent = msg;
+      messages.appendChild(item);
+      window.scrollTo(0, document.body.scrollHeight);
+      });*/
+    </script>
+  </body>
+</html>
